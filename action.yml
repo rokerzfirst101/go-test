@@ -1,0 +1,66 @@
+name: Go Test
+description: "Run Go Tests"
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Run Tests
+      shell: bash
+      run: |
+        mkdir -p build
+        go test ./... -count=1 -v -coverprofile=build/coverage.out -coverpkg=./...
+        cat $artifact_directory/cover.out | grep -v "mock_interface" | grep -v "migrations" > $artifact_directory/coverage.out
+
+    - name: Coverage Report
+      shell: bash
+      run: |
+        go tool cover -func=build/cover.out -o=build/coverage.out
+
+    - name: Extract Total Coverage Percentage
+      shell: bash
+      run: |
+        LAST_LINE=$(tail -n 1 coverage.out
+        NUMBER=$(echo $LAST_LINE | awk -F '%' '{print $1}' | awk '{print $NF}')
+        echo "::set-output name=percentage::$NUMBER"
+
+    - name: Determine color
+      shell: bash
+      run: |
+        NUMBER=${{ steps.extract.outputs.percentage }}
+        if (( $(echo "$NUMBER > 80" |bc -l) )); then
+          echo "::set-output name=badge_color::green"
+        elif (( $(echo "$NUMBER > 60" |bc -l) )); then
+          echo "::set-output name=badge_color::yellow"
+        else
+          echo "::set-output name=badge_color::red"
+        fi
+
+    - name: Create Badge
+      shell: bash
+      run: |
+        echo '[![Coverage]('\
+        'https://img.shields.io/badge/Coverage-'\
+        '${{ steps.extract.outputs.percentage }}%25-${{ steps.color.outputs.badge_color }})]'\
+        '()'\
+        ' > badge.md'
+
+    - name: Update Badge in README
+      shell: bash
+      run: |
+        BADGE_MARKER="<!-- COVERAGE BADGE -->"
+        BADGE_CONTENT="$(cat badge.md)"
+        if grep -q "$BADGE_MARKER" README.md; then
+          sed -i "/$BADGE_MARKER/{n;s/.*/$BADGE_CONTENT/}" README.md
+        else
+          echo -e "\n$BADGE_MARKER\n$BADGE_CONTENT" >> README.md
+        fi
+
+    - name: Commit and push if changed
+      shell: bash
+      run: |
+        git diff
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -am "Update README with extracted number" || exit 0
+        git push
