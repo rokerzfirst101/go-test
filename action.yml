@@ -19,7 +19,7 @@ runs:
     - name: Extract Total Coverage Percentage
       shell: bash
       run: |
-        LAST_LINE=$(tail -n 1 coverage.out
+        LAST_LINE=$(tail -n 1 coverage.out)
         NUMBER=$(echo $LAST_LINE | awk -F '%' '{print $1}' | awk '{print $NF}')
         echo "::set-output name=percentage::$NUMBER"
 
