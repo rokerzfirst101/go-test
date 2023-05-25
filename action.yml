@@ -48,7 +48,7 @@ runs:
         BADGE_MARKER="<!-- COVERAGE BADGE -->"
         BADGE_CONTENT="${{ env.badge }}"
         if grep -q "$BADGE_MARKER" README.md; then
-          perl -i -pe "s|$BADGE_MARKER.*|$BADGE_MARKER\n$BADGE_CONTENT|" README.md
+          perl -i -p0e "s|($BADGE_MARKER\n).*?(\n)|\1$BADGE_CONTENT\2|s" README.md
         else
           echo -e "\n$BADGE_MARKER\n$BADGE_CONTENT" >> README.md
         fi
