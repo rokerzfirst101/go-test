@@ -48,9 +48,15 @@ runs:
         BADGE_MARKER="<!-- COVERAGE BADGE -->"
         BADGE_CONTENT="${{ env.badge }}"
         if grep -q "$BADGE_MARKER" README.md; then
-          perl -i -p0e "s|($BADGE_MARKER\n).*?(\n)|\1$BADGE_CONTENT\2|s" README.md
+          awk -v content="$BADGE_CONTENT" -v marker="$BADGE_MARKER" '
+            {print}
+            $0 ~ marker {
+              getline
+              print content
+            }
+          ' README.md > temp && mv temp README.md
         else
-          echo -e "\n$BADGE_MARKER\n$BADGE_CONTENT" >> README.md
+          awk -v content="\n$BADGE_MARKER\n$BADGE_CONTENT" 'NR==1{$0=$0 content}1' README.md > temp && mv temp README.md
         fi
 
     - name: Commit and push if changed
