@@ -9,8 +9,8 @@ runs:
       shell: bash
       run: |
         mkdir -p build
-        go test ./... -count=1 -v -coverprofile=build/coverage.out -coverpkg=./...
-        cat $artifact_directory/cover.out | grep -v "mock_interface" | grep -v "migrations" > $artifact_directory/coverage.out
+        go test ./... -count=1 -v -coverprofile=build/cover.out -coverpkg=./...
+        cat build/cover.out | grep -v "mock_interface" | grep -v "migrations" > build/cover.out
 
     - name: Coverage Report
       shell: bash
