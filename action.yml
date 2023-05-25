@@ -42,6 +42,11 @@ runs:
       run: |
         echo "badge=[![Coverage](https://img.shields.io/badge/Coverage-${{ env.percentage }}%25-${{ env.badge_color }})]()" >> $GITHUB_ENV
 
+    - name: Git Pull
+      shell: bash
+      run: |
+        git pull
+
     - name: Update Badge in README
       shell: bash
       run: |
