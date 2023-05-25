@@ -14,7 +14,7 @@ runs:
     - name: Coverage Report
       shell: bash
       run: |
-        go tool cover -func=build/cover.out -o=build/coverage.out
+        go tool cover -func=cover.out -o=coverage.out
 
     - name: Extract Total Coverage Percentage
       shell: bash
