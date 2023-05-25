@@ -8,9 +8,8 @@ runs:
     - name: Run Tests
       shell: bash
       run: |
-        mkdir -p build
-        go test ./... -count=1 -v -coverprofile=build/cover.out -coverpkg=./...
-        cat build/cover.out | grep -v "mock_interface" | grep -v "migrations" > build/cover.out
+        go test ./... -count=1 -v -coverprofile=cover.out -coverpkg=./...
+        cat cover.out | grep -v "mock_interface" | grep -v "migrations" > coverage.out
 
     - name: Coverage Report
       shell: bash
