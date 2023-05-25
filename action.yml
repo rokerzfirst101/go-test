@@ -8,19 +8,19 @@ runs:
       shell: bash
       run: |
         mkdir -p build
-        go test ./... -count=1 -v -coverprofile=build/cover.out -coverpkg=./...
-        cat build/cover.out | grep -v "mock_interface" | grep -v "migrations" > build/cover.out
+        go test ./... -count=1 -v -coverprofile=cover.out -coverpkg=./...
+        cat cover.out | grep -v "mock_interface" | grep -v "migrations" > cover.out
 
     - name: Coverage Report
       shell: bash
       run: |
-        go tool cover -func=build/cover.out -o=build/coverage.out
+        go tool cover -func=cover.out -o=coverage.out
 
     - name: Extract Total Coverage Percentage
       shell: bash
       id: extract
       run: |
-        LAST_LINE=$(tail -n 1 build/coverage.out)
+        LAST_LINE=$(tail -n 1 coverage.out)
         NUMBER=$(echo $LAST_LINE | awk -F '%' '{print $1}' | awk '{print $NF}')
         echo "percentage=$NUMBER" >> $GITHUB_ENV
 
