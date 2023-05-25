@@ -42,11 +42,6 @@ runs:
       run: |
         echo "badge=[![Coverage](https://img.shields.io/badge/Coverage-${{ env.percentage }}%25-${{ env.badge_color }})]()" >> $GITHUB_ENV
 
-    - name: Git Pull
-      shell: bash
-      run: |
-        git pull
-
     - name: Update Badge in README
       shell: bash
       run: |
@@ -70,5 +65,5 @@ runs:
         git diff
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git commit -am "Update README with extracted number" || exit 0
+        git commit -am "Update README" || exit 0
         git push
